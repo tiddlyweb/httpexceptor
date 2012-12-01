@@ -22,7 +22,7 @@ class HTTPException(Exception):
     def headers(self):
         return [('Content-Type', 'text/plain; charset=UTF-8')]
 
-    def output(self):
+    def body(self):
         if not hasattr(self, 'args'):
             self.args = ('%s' % self,)
         output = []
@@ -41,7 +41,7 @@ class HTTP302(HTTPException):
     def headers(self):
         return [('Location', '%s' % self)]
 
-    def output(self):
+    def body(self):
         return ['']
 
 
@@ -59,7 +59,7 @@ class HTTP304(HTTPException):
     def headers(self):
         return [('Etag', '%s' % self)]
 
-    def output(self):
+    def body(self):
         return ['']
 
 
@@ -77,7 +77,7 @@ class HTTP401(HTTPException):
     def headers(self):
         return [('WWW-Authenticate', '%s' % self)]
 
-    def output(self):
+    def body(self):
         return ['']
 
 
@@ -125,7 +125,7 @@ class HTTPExceptor(object):
             return self.application(environ, start_response)
         except HTTPException, exc:
             start_response(exc.status, exc.headers(), exc_info)
-            return exc.output()
+            return exc.body()
         except:
             etype, value, traceb = sys.exc_info()
             exception_text = ''.join(traceback.format_exception(
