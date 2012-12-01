@@ -109,15 +109,13 @@ class HTTPExceptor(object):
                     exc.headers(), exc_info)
             return exc.body()
         except:
-            etype, value, traceb = sys.exc_info()
-            exception_text = ''.join(traceback.format_exception(
-                etype, value, traceb, None))
+            exc_info = sys.exc_info()
+            exception_text = ''.join(traceback.format_exception(*exc_info))
 
             # use both the web server's and the application's logging mechanisms
             print >> environ['wsgi.errors'], exception_text
             logging.warn(exception_text)
 
             start_response('500 %s' % httplib.responses[500],
-                    [('Content-Type', 'text/plain; charset=UTF-8')],
-                    sys.exc_info())
+                    [('Content-Type', 'text/plain; charset=UTF-8')], exc_info)
             return [exception_text]
