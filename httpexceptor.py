@@ -1,37 +1,30 @@
 """
-A group of exception classes representing HTTP error statuses, along
-with a WSGI middleware to turn the exceptions into proper HTTP headers.
+lightweight WSGI middleware to handle common HTTP responses using exceptions
 
-Anywhere in the stack, if an HTTP response other than 2xx is required
-just raise an HTTP<something> and this module will catch it and create
-the correct response to send to the client.
+provides a group of exception classes representing non-2xx HTTP statuses, along
+with a WSGI middleware to turn the exceptions into proper HTTP headers
+
+originally extracted from [TiddlyWeb](http://tiddlyweb.com)
 """
 
-import logging
 import sys
 import traceback
+import logging
 
 
 class HTTPException(Exception):
     """
-    Base class of an HTTP exception, which in
-    this context is a non 2xx response code.
+    base class of an HTTP exception
     """
 
     status = ''
 
     def headers(self):
-        """
-        Set the content type of the response.
-        """
         return [('Content-Type', 'text/plain; charset=UTF-8')]
 
     def output(self):
-        """
-        Output an error message.
-        """
         if not hasattr(self, 'args'):
-            self.args = ('%s' % self, )
+            self.args = ('%s' % self,)
         output = []
         for arg in self.args:
             if isinstance(arg, unicode):
@@ -46,15 +39,9 @@ class HTTP302(HTTPException):
     status = __doc__
 
     def headers(self):
-        """
-        A 302 requires a location header.
-        """
         return [('Location', '%s' % self)]
 
     def output(self):
-        """
-        A 302 _must_ have no output.
-        """
         return ['']
 
 
@@ -70,15 +57,9 @@ class HTTP304(HTTPException):
     status = __doc__
 
     def headers(self):
-        """
-        Send an ETag with a 304.
-        """
         return [('Etag', '%s' % self)]
 
     def output(self):
-        """
-        A 304 must not include a body.
-        """
         return ['']
 
 
@@ -94,15 +75,9 @@ class HTTP401(HTTPException):
     status = __doc__
 
     def headers(self):
-        """
-        A WWW-Authenticate header is expected with a 401.
-        """
         return [('WWW-Authenticate', '%s' % self)]
 
     def output(self):
-        """
-        No body with a 401.
-        """
         return ['']
 
 
@@ -138,12 +113,8 @@ class HTTP415(HTTPException):
 
 class HTTPExceptor(object):
     """
-    WSGI application that wraps internal WSGI
-    applications and traps HTTPExceptionS and
-    other exceptions. If the exceptions is an
-    HTTPException we send a reasonable response
-    to the browser. If the exception is some other
-    form we do an HTTP 500 and send a traceback.
+    WSGI middleware to trap exceptions, turning them into the corresponding
+    HTTP response
     """
 
     def __init__(self, application):
@@ -159,8 +130,11 @@ class HTTPExceptor(object):
             etype, value, traceb = sys.exc_info()
             exception_text = ''.join(traceback.format_exception(
                 etype, value, traceb, None))
+
+            # use both the web server's and the application's logging mechanisms
             print >> environ['wsgi.errors'], exception_text
             logging.warn(exception_text)
+
             start_response('500 server error',
                     [('Content-Type', 'text/plain')], sys.exc_info())
             return [exception_text]
