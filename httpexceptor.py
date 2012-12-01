@@ -10,14 +10,13 @@ originally extracted from [TiddlyWeb](http://tiddlyweb.com)
 import sys
 import traceback
 import logging
+import httplib
 
 
 class HTTPException(Exception):
     """
     base class of an HTTP exception
     """
-
-    status = ''
 
     def headers(self):
         return [('Content-Type', 'text/plain; charset=UTF-8')]
@@ -36,8 +35,6 @@ class HTTPException(Exception):
 class HTTP302(HTTPException):
     """302 Found"""
 
-    status = __doc__
-
     def headers(self):
         return [('Location', '%s' % self)]
 
@@ -48,13 +45,9 @@ class HTTP302(HTTPException):
 class HTTP303(HTTP302):
     """303 See Other"""
 
-    status = __doc__
-
 
 class HTTP304(HTTPException):
     """304 Not Modified"""
-
-    status = __doc__
 
     def headers(self):
         return [('Etag', '%s' % self)]
@@ -66,13 +59,9 @@ class HTTP304(HTTPException):
 class HTTP400(HTTPException):
     """400 Bad Request"""
 
-    status = __doc__
-
 
 class HTTP401(HTTPException):
     """401 Unauthorized"""
-
-    status = __doc__
 
     def headers(self):
         return [('WWW-Authenticate', '%s' % self)]
@@ -84,31 +73,21 @@ class HTTP401(HTTPException):
 class HTTP403(HTTPException):
     """403 Forbidden"""
 
-    status = __doc__
-
 
 class HTTP404(HTTPException):
     """404 Not Found"""
-
-    status = __doc__
 
 
 class HTTP409(HTTPException):
     """409 Conflict"""
 
-    status = __doc__
-
 
 class HTTP412(HTTPException):
     """412 Precondition Failed"""
 
-    status = __doc__
-
 
 class HTTP415(HTTPException):
     """415 Unsupported"""
-
-    status = __doc__
 
 
 class HTTPExceptor(object):
@@ -124,7 +103,10 @@ class HTTPExceptor(object):
         try:
             return self.application(environ, start_response)
         except HTTPException, exc:
-            start_response(exc.status, exc.headers(), exc_info)
+            # read status code from exception class's docstring
+            status = int(exc.__class__.__doc__.split(" ")[0])
+            start_response('%s %s' % (status, httplib.responses[status]),
+                    exc.headers(), exc_info)
             return exc.body()
         except:
             etype, value, traceb = sys.exc_info()
@@ -135,6 +117,7 @@ class HTTPExceptor(object):
             print >> environ['wsgi.errors'], exception_text
             logging.warn(exception_text)
 
-            start_response('500 server error',
-                    [('Content-Type', 'text/plain')], sys.exc_info())
+            start_response('500 %s' % httplib.responses[500],
+                    [('Content-Type', 'text/plain; charset=UTF-8')],
+                    sys.exc_info())
             return [exception_text]
