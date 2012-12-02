@@ -27,8 +27,8 @@ class HTTPExceptor(object):
             return self.application(environ, start_response)
         except HTTPException, exc:
             # read status code from exception class's docstring
-            status = int(exc.__class__.__doc__.split(" ")[0])
-            start_response('%s %s' % (status, httplib.responses[status]),
+            exc.status = int(exc.__class__.__doc__.split(' ')[0])
+            start_response('%s %s' % (exc.status, httplib.responses[exc.status]),
                     exc.headers(), exc_info)
             return exc.body()
         except:
@@ -81,7 +81,7 @@ class HTTP304(HTTPException):
     """304 Not Modified"""
 
     def headers(self):
-        return [('Etag', '%s' % self)]
+        return [('ETag', '%s' % self)]
 
     def body(self):
         return ['']
