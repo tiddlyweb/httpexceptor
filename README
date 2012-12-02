@@ -1,4 +1,5 @@
 httpexceptor
+
 lightweight WSGI middleware to handle common HTTP responses using exceptions
 
 provides a group of exception classes representing non-2xx HTTP statuses, along
@@ -16,5 +17,6 @@ Usage
     app = HTTPExceptor(app)
 
     # ...
+
     if unavailable:
         raise HTTP404("resource unavailable")
