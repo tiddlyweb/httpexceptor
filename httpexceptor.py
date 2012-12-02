@@ -13,6 +13,37 @@ import logging
 import httplib
 
 
+class HTTPExceptor(object):
+    """
+    WSGI middleware to trap exceptions, turning them into the corresponding
+    HTTP response
+    """
+
+    def __init__(self, application):
+        self.application = application
+
+    def __call__(self, environ, start_response, exc_info=None):
+        try:
+            return self.application(environ, start_response)
+        except HTTPException, exc:
+            # read status code from exception class's docstring
+            status = int(exc.__class__.__doc__.split(" ")[0])
+            start_response('%s %s' % (status, httplib.responses[status]),
+                    exc.headers(), exc_info)
+            return exc.body()
+        except:
+            exc_info = sys.exc_info()
+            exception_text = ''.join(traceback.format_exception(*exc_info))
+
+            # use both the web server's and the application's logging mechanisms
+            print >> environ['wsgi.errors'], exception_text
+            logging.warn(exception_text)
+
+            start_response('500 %s' % httplib.responses[500],
+                    [('Content-Type', 'text/plain; charset=UTF-8')], exc_info)
+            return [exception_text]
+
+
 class HTTPException(Exception):
     """
     base class of an HTTP exception
@@ -88,34 +119,3 @@ class HTTP412(HTTPException):
 
 class HTTP415(HTTPException):
     """415 Unsupported"""
-
-
-class HTTPExceptor(object):
-    """
-    WSGI middleware to trap exceptions, turning them into the corresponding
-    HTTP response
-    """
-
-    def __init__(self, application):
-        self.application = application
-
-    def __call__(self, environ, start_response, exc_info=None):
-        try:
-            return self.application(environ, start_response)
-        except HTTPException, exc:
-            # read status code from exception class's docstring
-            status = int(exc.__class__.__doc__.split(" ")[0])
-            start_response('%s %s' % (status, httplib.responses[status]),
-                    exc.headers(), exc_info)
-            return exc.body()
-        except:
-            exc_info = sys.exc_info()
-            exception_text = ''.join(traceback.format_exception(*exc_info))
-
-            # use both the web server's and the application's logging mechanisms
-            print >> environ['wsgi.errors'], exception_text
-            logging.warn(exception_text)
-
-            start_response('500 %s' % httplib.responses[500],
-                    [('Content-Type', 'text/plain; charset=UTF-8')], exc_info)
-            return [exception_text]
