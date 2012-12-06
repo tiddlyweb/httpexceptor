@@ -7,7 +7,7 @@ from StringIO import StringIO
 
 def mock_response(error=None, message=None):
     responses = []
-    environ = { 'wsgi.errors': StringIO() }
+    environ = {'wsgi.errors': StringIO()}
 
     def start_response_mock(status, headers, exc_info=None):
         responses.append((status, dict(headers)))

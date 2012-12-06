@@ -11,7 +11,7 @@ META = {
     'name': 'httpexceptor',
     'url': 'http://pypi.python.org/pypi/httpexceptor',
     'version': httpexceptor.__version__,
-    'description': 'lightweight WSGI middleware to handle common HTTP responses using exceptions',
+    'description': 'WSGI middleware to handle HTTP responses using exceptions',
     'long_description': DESC,
     'license': 'LICENSE',
     'author': httpexceptor.__author__,

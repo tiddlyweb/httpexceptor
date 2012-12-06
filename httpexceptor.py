@@ -39,7 +39,7 @@ class HTTPExceptor(object):
             exc_info = sys.exc_info()
             exception_text = ''.join(traceback.format_exception(*exc_info))
 
-            # use both the web server's and the application's logging mechanisms
+            # use the web server's and the application's logging mechanisms
             print >> environ['wsgi.errors'], exception_text
             logging.warn(exception_text)
 
