@@ -9,8 +9,12 @@ DESC = open(os.path.join(os.path.dirname(__file__), 'README.md')).read()
 
 META = {
     'name': 'httpexceptor',
+    'url': 'http://pypi.python.org/pypi/httpexceptor',
     'version': VERSION,
     'long_description': DESC,
+    'author': 'Chris Dent',
+    'author_email': 'cdent@peermore.com',
+    'maintainer': 'FND',
     'packages': find_packages(exclude=['test']),
     'include_package_data': False,
     'zip_safe': False,
