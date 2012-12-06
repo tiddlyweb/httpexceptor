@@ -1,20 +1,19 @@
 import os
 
-import httpexceptor
-
 from setuptools import setup, find_packages
 
+from httpexceptor import __version__ as VERSION, __author__ as AUTHOR
 
 DESC = open(os.path.join(os.path.dirname(__file__), 'README')).read()
 
 META = {
     'name': 'httpexceptor',
     'url': 'http://pypi.python.org/pypi/httpexceptor',
-    'version': httpexceptor.__version__,
+    'version': VERSION,
     'description': 'WSGI middleware to handle HTTP responses using exceptions',
     'long_description': DESC,
     'license': 'LICENSE',
-    'author': httpexceptor.__author__,
+    'author': AUTHOR,
     'author_email': 'cdent@peermore.com',
     'maintainer': 'FND',
     'packages': find_packages(exclude=['test']),
