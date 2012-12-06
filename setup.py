@@ -5,7 +5,7 @@ import httpexceptor
 from setuptools import setup, find_packages
 
 
-DESC = open(os.path.join(os.path.dirname(__file__), 'README.md')).read()
+DESC = open(os.path.join(os.path.dirname(__file__), 'README')).read()
 
 META = {
     'name': 'httpexceptor',
