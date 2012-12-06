@@ -126,5 +126,15 @@ def test_415():
     assert body == ['415: error message']
 
 
+def test_500():
+    status, headers, body = mock_response(999, "fail")
+
+    assert status == _status(500)
+    assert len(headers) == 1
+    assert headers['Content-Type'] == 'text/plain; charset=UTF-8'
+    assert len(body) == 1
+    assert body[0].startswith("Traceback ")
+
+
 def _status(code):
     return '%s %s' % (code, httplib.responses[code])

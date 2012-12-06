@@ -39,7 +39,7 @@ class HTTPExceptor(object):
             print >> environ['wsgi.errors'], exception_text
             logging.warn(exception_text)
 
-            start_response('500 %s' % httplib.responses[500],
+            start_response('500 Internal Server Error',
                     [('Content-Type', 'text/plain; charset=UTF-8')], exc_info)
             return [exception_text]
 

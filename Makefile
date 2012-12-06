@@ -20,7 +20,7 @@ lint:
 
 coverage: clean
 	# option #1: figleaf
-	find httpexceptor test -name "*.py" > coverage.lst
+	find . test -name "*.py" > coverage.lst
 	figleaf `which py.test` test
 	figleaf2html -f coverage.lst
 	# option #2: coverage
