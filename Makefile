@@ -1,7 +1,9 @@
 .PHONY: release dist test lint coverage clean
 
 release: dist
-	git tag -a v`python -c 'import httpexceptor; print httpexceptor.__version__'`
+	git tag -a \
+			-m v`python -c 'import httpexceptor; print httpexceptor.__version__'` \
+			v`python -c 'import httpexceptor; print httpexceptor.__version__'`
 	git push origin master --tags
 
 dist: clean test
