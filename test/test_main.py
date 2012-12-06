@@ -1,3 +1,5 @@
+import httplib
+
 import httpexceptor
 
 from StringIO import StringIO
@@ -28,7 +30,7 @@ def mock_response(error=None, message=None):
 def test_no_errors():
     status, headers, body = mock_response()
 
-    assert status == '200 OK'
+    assert status == _status(200)
     assert len(headers) == 1
     assert headers['Content-Type'] == 'text/plain'
     assert body == ['no errors']
@@ -37,7 +39,7 @@ def test_no_errors():
 def test_302():
     status, headers, body = mock_response(302, 'http://example.org')
 
-    assert status == '302 Found'
+    assert status == _status(302)
     assert len(headers) == 1
     assert headers['Location'] == 'http://example.org'
     assert body == ['']
@@ -46,7 +48,7 @@ def test_302():
 def test_303():
     status, headers, body = mock_response(303, 'http://example.org')
 
-    assert status == '303 See Other'
+    assert status == _status(303)
     assert len(headers) == 1
     assert headers['Location'] == 'http://example.org'
     assert body == ['']
@@ -55,7 +57,7 @@ def test_303():
 def test_304():
     status, headers, body = mock_response(304, '123abc')
 
-    assert status == '304 Not Modified'
+    assert status == _status(304)
     assert len(headers) == 1
     assert headers['ETag'] == '123abc'
     assert body == ['']
@@ -64,7 +66,7 @@ def test_304():
 def test_400():
     status, headers, body = mock_response(400)
 
-    assert status == '400 Bad Request'
+    assert status == _status(400)
     assert len(headers) == 1
     assert headers['Content-Type'] == 'text/plain; charset=UTF-8'
     assert body == ['400: error message']
@@ -73,7 +75,7 @@ def test_400():
 def test_401():
     status, headers, body = mock_response(401, 'login')
 
-    assert status == '401 Unauthorized'
+    assert status == _status(401)
     assert len(headers) == 1
     assert headers['WWW-Authenticate'] == 'login'
     assert body == ['']
@@ -82,7 +84,7 @@ def test_401():
 def test_403():
     status, headers, body = mock_response(403)
 
-    assert status == '403 Forbidden'
+    assert status == _status(403)
     assert len(headers) == 1
     assert headers['Content-Type'] == 'text/plain; charset=UTF-8'
     assert body == ['403: error message']
@@ -91,7 +93,7 @@ def test_403():
 def test_404():
     status, headers, body = mock_response(404)
 
-    assert status == '404 Not Found'
+    assert status == _status(404)
     assert len(headers) == 1
     assert headers['Content-Type'] == 'text/plain; charset=UTF-8'
     assert body == ['404: error message']
@@ -100,7 +102,7 @@ def test_404():
 def test_409():
     status, headers, body = mock_response(409)
 
-    assert status == '409 Conflict'
+    assert status == _status(409)
     assert len(headers) == 1
     assert headers['Content-Type'] == 'text/plain; charset=UTF-8'
     assert body == ['409: error message']
@@ -109,7 +111,7 @@ def test_409():
 def test_412():
     status, headers, body = mock_response(412)
 
-    assert status == '412 Precondition Failed'
+    assert status == _status(412)
     assert len(headers) == 1
     assert headers['Content-Type'] == 'text/plain; charset=UTF-8'
     assert body == ['412: error message']
@@ -118,7 +120,11 @@ def test_412():
 def test_415():
     status, headers, body = mock_response(415)
 
-    assert status == '415 Unsupported Media Type'
+    assert status == _status(415)
     assert len(headers) == 1
     assert headers['Content-Type'] == 'text/plain; charset=UTF-8'
     assert body == ['415: error message']
+
+
+def _status(code):
+    return '%s %s' % (code, httplib.responses[code])

@@ -10,7 +10,6 @@ originally extracted from [TiddlyWeb](http://tiddlyweb.com)
 import sys
 import traceback
 import logging
-import httplib
 
 
 class HTTPExceptor(object):
@@ -27,9 +26,7 @@ class HTTPExceptor(object):
             return self.application(environ, start_response)
         except HTTPException, exc:
             # read status code from exception class's docstring
-            exc.status = int(exc.__class__.__doc__.split(' ')[0])
-            start_response('%s %s' % (exc.status, httplib.responses[exc.status]),
-                    exc.headers(), exc_info)
+            start_response(exc.status, exc.headers(), exc_info)
             return exc.body()
         except:
             exc_info = sys.exc_info()
@@ -49,6 +46,8 @@ class HTTPException(Exception):
     base class of an HTTP exception
     """
 
+    status = None
+
     def headers(self):
         return [('Content-Type', 'text/plain; charset=UTF-8')]
 
@@ -60,11 +59,14 @@ class HTTPException(Exception):
             if isinstance(arg, unicode):
                 arg = arg.encode('utf-8')
             output.append('%s' % arg)
-        return ['%s: %s' % (self.status, ' '.join(output))]
+        status_code = self.status.split(" ")[0]
+        return ['%s: %s' % (status_code, ' '.join(output))]
 
 
 class HTTP302(HTTPException):
     """302 Found"""
+
+    status = __doc__
 
     def headers(self):
         return [('Location', '%s' % self)]
@@ -76,9 +78,13 @@ class HTTP302(HTTPException):
 class HTTP303(HTTP302):
     """303 See Other"""
 
+    status = __doc__
+
 
 class HTTP304(HTTPException):
     """304 Not Modified"""
+
+    status = __doc__
 
     def headers(self):
         return [('ETag', '%s' % self)]
@@ -90,9 +96,13 @@ class HTTP304(HTTPException):
 class HTTP400(HTTPException):
     """400 Bad Request"""
 
+    status = __doc__
+
 
 class HTTP401(HTTPException):
     """401 Unauthorized"""
+
+    status = __doc__
 
     def headers(self):
         return [('WWW-Authenticate', '%s' % self)]
@@ -104,18 +114,28 @@ class HTTP401(HTTPException):
 class HTTP403(HTTPException):
     """403 Forbidden"""
 
+    status = __doc__
+
 
 class HTTP404(HTTPException):
     """404 Not Found"""
+
+    status = __doc__
 
 
 class HTTP409(HTTPException):
     """409 Conflict"""
 
+    status = __doc__
+
 
 class HTTP412(HTTPException):
     """412 Precondition Failed"""
 
+    status = __doc__
+
 
 class HTTP415(HTTPException):
-    """415 Unsupported"""
+    """415 Unsupported Media Type"""
+
+    status = __doc__
