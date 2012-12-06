@@ -19,4 +19,4 @@ Usage
     # ...
 
     if unavailable:
-        raise HTTP404("resource unavailable")
+        raise HTTP404('resource unavailable')

@@ -12,6 +12,9 @@ import traceback
 import logging
 
 
+__version__ = '1.0.0'
+
+
 class HTTPExceptor(object):
     """
     WSGI middleware to trap exceptions, turning them into the corresponding
