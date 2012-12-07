@@ -8,7 +8,7 @@ DESC = open(os.path.join(os.path.dirname(__file__), 'README')).read()
 
 META = {
     'name': 'httpexceptor',
-    'url': 'http://pypi.python.org/pypi/httpexceptor',
+    'url': 'https://github.com/tiddlyweb/httpexceptor',
     'version': VERSION,
     'description': 'WSGI middleware to handle HTTP responses using exceptions',
     'long_description': DESC,
