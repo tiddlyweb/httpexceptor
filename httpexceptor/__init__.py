@@ -12,7 +12,7 @@ import traceback
 import logging
 
 
-__version__ = '1.1.1'
+__version__ = '1.1.2'
 __author__ = 'Chris Dent'
 __copyright__ = 'Copyright UnaMesa Association 2012'
 __contributors__ = ['FND']
@@ -66,8 +66,7 @@ class HTTPException(Exception):
             if isinstance(arg, unicode):
                 arg = arg.encode('utf-8')
             output.append('%s' % arg)
-        status_code = self.status.split(" ")[0]
-        return ['%s: %s' % (status_code, ' '.join(output))]
+        return ['%s: %s' % (self.status, ' '.join(output))]
 
 
 class HTTP302(HTTPException):

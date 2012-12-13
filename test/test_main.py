@@ -69,7 +69,7 @@ def test_400():
     assert status == _status(400)
     assert len(headers) == 1
     assert headers['Content-Type'] == 'text/plain; charset=UTF-8'
-    assert body == ['400: error message']
+    assert body == ['400 Bad Request: error message']
 
 
 def test_401():
@@ -87,7 +87,7 @@ def test_403():
     assert status == _status(403)
     assert len(headers) == 1
     assert headers['Content-Type'] == 'text/plain; charset=UTF-8'
-    assert body == ['403: error message']
+    assert body == ['403 Forbidden: error message']
 
 
 def test_404():
@@ -96,7 +96,7 @@ def test_404():
     assert status == _status(404)
     assert len(headers) == 1
     assert headers['Content-Type'] == 'text/plain; charset=UTF-8'
-    assert body == ['404: error message']
+    assert body == ['404 Not Found: error message']
 
 
 def test_409():
@@ -105,7 +105,7 @@ def test_409():
     assert status == _status(409)
     assert len(headers) == 1
     assert headers['Content-Type'] == 'text/plain; charset=UTF-8'
-    assert body == ['409: error message']
+    assert body == ['409 Conflict: error message']
 
 
 def test_412():
@@ -114,7 +114,7 @@ def test_412():
     assert status == _status(412)
     assert len(headers) == 1
     assert headers['Content-Type'] == 'text/plain; charset=UTF-8'
-    assert body == ['412: error message']
+    assert body == ['412 Precondition Failed: error message']
 
 
 def test_415():
@@ -123,7 +123,7 @@ def test_415():
     assert status == _status(415)
     assert len(headers) == 1
     assert headers['Content-Type'] == 'text/plain; charset=UTF-8'
-    assert body == ['415: error message']
+    assert body == ['415 Unsupported Media Type: error message']
 
 
 def test_500():
