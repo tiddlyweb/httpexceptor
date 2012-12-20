@@ -6,7 +6,7 @@ WSGI middleware to handle HTTP responses using exceptions
 provides a group of exception classes representing non-2xx HTTP statuses, along
 with a WSGI middleware to turn the exceptions into proper HTTP headers
 
-originally extracted from TiddlyWeb_
+originally extracted from `TiddlyWeb <http://tiddlyweb.com>`_
 
 
 Usage
@@ -23,9 +23,6 @@ Usage
 
     if unavailable:
         raise HTTP404('resource unavailable')
-
-
-.. _TiddlyWeb: http://tiddlyweb.com
 """
 
 import sys
