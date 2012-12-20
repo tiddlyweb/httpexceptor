@@ -1,10 +1,31 @@
 """
-lightweight WSGI middleware to handle common HTTP responses using exceptions
+httpexceptor
+
+WSGI middleware to handle HTTP responses using exceptions
 
 provides a group of exception classes representing non-2xx HTTP statuses, along
 with a WSGI middleware to turn the exceptions into proper HTTP headers
 
-originally extracted from [TiddlyWeb](http://tiddlyweb.com)
+originally extracted from TiddlyWeb_
+
+
+Usage
+-----
+
+::
+
+    from httpexceptor import HTTPExceptor, HTTP404
+
+    # register middleware
+    app = HTTPExceptor(app)
+
+    # ...
+
+    if unavailable:
+        raise HTTP404('resource unavailable')
+
+
+.. _TiddlyWeb: http://tiddlyweb.com
 """
 
 import sys

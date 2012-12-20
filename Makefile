@@ -1,6 +1,7 @@
-.PHONY: release dist test lint coverage clean
+.PHONY: release dist readme test lint coverage clean
 
-release: clean test
+release: readme clean test
+	git diff --exit-code # ensure there are no uncommitted changes
 	git tag -a \
 			-m v`python -c 'import httpexceptor; print httpexceptor.__version__'` \
 			v`python -c 'import httpexceptor; print httpexceptor.__version__'`
@@ -12,6 +13,9 @@ release: clean test
 dist: clean test
 	rm -r dist || true
 	python setup.py sdist
+
+readme:
+	python -c "import httpexceptor; print httpexceptor.__doc__.strip()" > README
 
 test: clean
 	py.test -s --tb=short test
