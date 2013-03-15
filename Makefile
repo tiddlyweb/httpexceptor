@@ -41,7 +41,7 @@ coverage: clean
 			"\`htmlcov/index.html\` (coverage)"
 
 clean:
-	find . -name "*.pyc" | xargs rm || true
+	find . -name "*.pyc" -print0 | xargs -0 rm || true
 	rm -rf html .figleaf coverage.lst # figleaf
 	rm -rf htmlcov .coverage # coverage
 	rm -rf test/__pycache__ # pytest

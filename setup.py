@@ -4,6 +4,7 @@ from setuptools import setup, find_packages
 
 from httpexceptor import __version__ as VERSION, __author__ as AUTHOR
 
+
 DESC = open(os.path.join(os.path.dirname(__file__), 'README')).read()
 
 META = {
@@ -28,4 +29,5 @@ META = {
 }
 
 
-setup(**META)
+if __name__ == '__main__':
+    setup(**META)
