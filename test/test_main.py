@@ -63,6 +63,36 @@ def test_304():
     assert body == ['']
 
 
+def test_304_httpbis():
+    exception = httpexceptor.HTTP304(etag='123abc', vary='accept',
+            cache_control='no-cache', last_modified='bad date',
+            expires='bad time', content_location='http://example.com')
+
+    assert exception.status == '304 Not Modified'
+    assert exception.body() == ['']
+    headers = {header[0]: header[1] for header in exception.headers()}
+    assert len(headers) == 6
+    assert headers['etag'] == '123abc'
+    assert headers['vary'] == 'accept'
+    assert headers['cache-control'] == 'no-cache'
+    assert headers['last-modified'] == 'bad date'
+    assert headers['expires'] == 'bad time'
+    assert headers['content-location'] == 'http://example.com'
+
+    exception = httpexceptor.HTTP304(etag='123abc')
+
+    assert exception.status == '304 Not Modified'
+    assert exception.body() == ['']
+    headers = {header[0]: header[1] for header in exception.headers()}
+    assert len(headers) == 1
+    assert headers['etag'] == '123abc'
+    assert 'vary' not in headers
+    assert 'cache-control' not in headers
+    assert 'last-modified' not in headers
+    assert 'expires' not in headers
+    assert 'content-location' not in headers
+
+
 def test_400():
     status, headers, body = mock_response(400)
 
