@@ -30,7 +30,7 @@ import traceback
 import logging
 
 
-__version__ = '1.1.2'
+__version__ = '1.2.0'
 __author__ = 'Chris Dent'
 __copyright__ = 'Copyright UnaMesa Association 2012'
 __contributors__ = ['FND']
