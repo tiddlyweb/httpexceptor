@@ -110,8 +110,32 @@ class HTTP304(HTTPException):
 
     status = __doc__
 
+    def __init__(self, etag='', vary='', cache_control='', last_modified='',
+            content_location='', expires=''):
+        """
+        Arguments map to and are restricted to those headers which are
+        considered required or optional by the httpbis specification.
+
+        A 304 is required to return the same etag, vary, cache-control,
+        content-location and expires as would be sent if the response
+        had been 200.
+        """
+        self._headers = {
+                'etag': etag,
+                'vary': vary,
+                'cache-control': cache_control,
+                'last-modified': last_modified,
+                'content-location': content_location,
+                'expires': expires
+        }
+
     def headers(self):
-        return [('ETag', '%s' % self)]
+        """
+        Construct a list of header name value tuples only
+        returning those headers for which there is a real value.
+        """
+        return [(name, value) for name, value in self._headers.items()
+                if value]
 
     def body(self):
         return ['']
