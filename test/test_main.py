@@ -59,7 +59,7 @@ def test_304():
 
     assert status == _status(304)
     assert len(headers) == 1
-    assert headers['ETag'] == '123abc'
+    assert headers['etag'] == '123abc'
     assert body == ['']
 
 
