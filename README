@@ -7,6 +7,8 @@ with a WSGI middleware to turn the exceptions into proper HTTP headers
 
 originally extracted from `TiddlyWeb <http://tiddlyweb.com>`_
 
+source repository: https://github.com/tiddlyweb/httpexceptor
+
 
 Usage
 -----

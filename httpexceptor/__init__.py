@@ -8,6 +8,8 @@ with a WSGI middleware to turn the exceptions into proper HTTP headers
 
 originally extracted from `TiddlyWeb <http://tiddlyweb.com>`_
 
+source repository: https://github.com/tiddlyweb/httpexceptor
+
 
 Usage
 -----
@@ -30,7 +32,7 @@ import traceback
 import logging
 
 
-__version__ = '1.2.0'
+__version__ = '1.2.1'
 __author__ = 'Chris Dent'
 __copyright__ = 'Copyright UnaMesa Association 2012'
 __contributors__ = ['FND']
