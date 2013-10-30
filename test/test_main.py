@@ -1,4 +1,7 @@
-import httplib
+try:
+    from httplib import responses as http_responses
+except ImportError:
+    from http.client import responses as http_responses
 
 import httpexceptor
 
@@ -83,7 +86,7 @@ def test_304_httpbis():
 
     assert exception.status == '304 Not Modified'
     assert exception.body() == ['']
-    headers = {header[0]: header[1] for header in exception.headers()}
+    headers = dict([(header[0], header[1]) for header in exception.headers()])
     assert len(headers) == 1
     assert headers['etag'] == '123abc'
     assert 'vary' not in headers
@@ -167,4 +170,4 @@ def test_500():
 
 
 def _status(code):
-    return '%s %s' % (code, httplib.responses[code])
+    return '%s %s' % (code, http_responses[code])
