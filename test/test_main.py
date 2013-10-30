@@ -76,7 +76,7 @@ def test_304_httpbis():
 
     assert exception.status == '304 Not Modified'
     assert exception.body() == ['']
-    headers = {header[0]: header[1] for header in exception.headers()}
+    headers = dict([(header[0], header[1]) for header in exception.headers()])
     assert len(headers) == 6
     assert headers['etag'] == '123abc'
     assert headers['vary'] == 'accept'
