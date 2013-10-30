@@ -31,6 +31,11 @@ import sys
 import traceback
 import logging
 
+try:
+    unicode
+except NameError:
+    unicode = str
+
 
 __version__ = '1.2.1'
 __author__ = 'Chris Dent'
@@ -51,7 +56,7 @@ class HTTPExceptor(object):
     def __call__(self, environ, start_response, exc_info=None):
         try:
             return self.application(environ, start_response)
-        except HTTPException, exc:
+        except HTTPException as exc:
             # read status code from exception class's docstring
             start_response(exc.status, exc.headers(), exc_info)
             return exc.body()
@@ -60,8 +65,9 @@ class HTTPExceptor(object):
             exception_text = ''.join(traceback.format_exception(*exc_info))
 
             # use the web server's and the application's logging mechanisms
-            print >> environ['wsgi.errors'], exception_text
-            logging.warn(exception_text)
+            output_stream = environ['wsgi.errors']
+            output_stream.write(bytes(exception_text.encode('utf-8', 'replace')))
+            logging.warning(exception_text)
 
             start_response('500 Internal Server Error',
                     [('Content-Type', 'text/plain; charset=UTF-8')], exc_info)
