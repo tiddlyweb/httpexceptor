@@ -71,7 +71,7 @@ class HTTPExceptor(object):
 
             start_response('500 Internal Server Error',
                     [('Content-Type', 'text/plain; charset=UTF-8')], exc_info)
-            return [exception_text]
+            return [exception_text.encode('utf-8', 'replace')]
 
 
 class HTTPException(Exception):
@@ -89,10 +89,9 @@ class HTTPException(Exception):
             self.args = ('%s' % self,)
         output = []
         for arg in self.args:
-            if isinstance(arg, unicode):
-                arg = arg.encode('utf-8')
-            output.append('%s' % arg)
-        return ['%s: %s' % (self.status, ' '.join(output))]
+            output.append(arg)
+        output = '%s: %s' % (self.status, ' '.join(output))
+        return [output.encode('UTF-8')]
 
 
 class HTTP302(HTTPException):
@@ -104,7 +103,7 @@ class HTTP302(HTTPException):
         return [('Location', '%s' % self)]
 
     def body(self):
-        return ['']
+        return []
 
 
 class HTTP303(HTTP302):
@@ -146,7 +145,7 @@ class HTTP304(HTTPException):
                 if value]
 
     def body(self):
-        return ['']
+        return []
 
 
 class HTTP400(HTTPException):
@@ -164,7 +163,7 @@ class HTTP401(HTTPException):
         return [('WWW-Authenticate', '%s' % self)]
 
     def body(self):
-        return ['']
+        return []
 
 
 class HTTP403(HTTPException):
