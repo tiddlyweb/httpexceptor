@@ -19,7 +19,7 @@ Programming Language :: Python :: 3.3
 Topic :: Internet :: WWW/HTTP :: WSGI :: Middleware
 """
 
-CLASSIFIER_LIST = CLASSIFIERS.splitlines()
+CLASSIFIER_LIST = CLASSIFIERS.strip().splitlines()
 
 META = {
     'name': 'httpexceptor',
