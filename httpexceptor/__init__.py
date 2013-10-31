@@ -33,7 +33,7 @@ import logging
 
 try:
     unicode
-except NameError:
+except NameError: # Python 3
     unicode = str
 
 

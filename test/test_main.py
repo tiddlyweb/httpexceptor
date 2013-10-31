@@ -1,13 +1,13 @@
-try:
-    from httplib import responses as http_responses
-except ImportError:
-    from http.client import responses as http_responses
-
 import httpexceptor
 
 try:
+    from httplib import responses as http_responses
+except ImportError: # Python 3
+    from http.client import responses as http_responses
+
+try:
     from StringIO import StringIO
-except ImportError:
+except ImportError: # Python 3
     from io import BytesIO as StringIO
 
 
