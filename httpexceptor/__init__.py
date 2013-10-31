@@ -37,7 +37,7 @@ except NameError: # Python 3
     unicode = str
 
 
-__version__ = '1.2.1'
+__version__ = '1.3.0'
 __author__ = 'Chris Dent'
 __copyright__ = 'Copyright UnaMesa Association 2012'
 __contributors__ = ['FND']
