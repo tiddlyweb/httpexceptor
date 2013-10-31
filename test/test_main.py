@@ -1,8 +1,14 @@
-import httplib
-
 import httpexceptor
 
-from StringIO import StringIO
+try:
+    from httplib import responses as http_responses
+except ImportError: # Python 3
+    from http.client import responses as http_responses
+
+try:
+    from StringIO import StringIO
+except ImportError: # Python 3
+    from io import BytesIO as StringIO
 
 
 def mock_response(error=None, message=None):
@@ -18,12 +24,13 @@ def mock_response(error=None, message=None):
             raise exception_class(message or 'error message')
         else:
             start_response('200 OK', [('Content-Type', 'text/plain')])
-            return ['no errors']
+            return ['no errors'.encode('utf-8')]
 
     # register middleware
     app = httpexceptor.HTTPExceptor(app)
 
     body = app(environ, start_response_mock)
+    body = ''.join(line.decode('utf-8') for line in body)
     return responses[0][0], responses[0][1], body
 
 
@@ -33,7 +40,7 @@ def test_no_errors():
     assert status == _status(200)
     assert len(headers) == 1
     assert headers['Content-Type'] == 'text/plain'
-    assert body == ['no errors']
+    assert body == 'no errors'
 
 
 def test_302():
@@ -42,7 +49,7 @@ def test_302():
     assert status == _status(302)
     assert len(headers) == 1
     assert headers['Location'] == 'http://example.org'
-    assert body == ['']
+    assert body == ''
 
 
 def test_303():
@@ -51,7 +58,7 @@ def test_303():
     assert status == _status(303)
     assert len(headers) == 1
     assert headers['Location'] == 'http://example.org'
-    assert body == ['']
+    assert body == ''
 
 
 def test_304():
@@ -60,7 +67,7 @@ def test_304():
     assert status == _status(304)
     assert len(headers) == 1
     assert headers['etag'] == '123abc'
-    assert body == ['']
+    assert body == ''
 
 
 def test_304_httpbis():
@@ -69,8 +76,8 @@ def test_304_httpbis():
             expires='bad time', content_location='http://example.com')
 
     assert exception.status == '304 Not Modified'
-    assert exception.body() == ['']
-    headers = {header[0]: header[1] for header in exception.headers()}
+    assert exception.body() == []
+    headers = dict([(header[0], header[1]) for header in exception.headers()])
     assert len(headers) == 6
     assert headers['etag'] == '123abc'
     assert headers['vary'] == 'accept'
@@ -82,8 +89,8 @@ def test_304_httpbis():
     exception = httpexceptor.HTTP304(etag='123abc')
 
     assert exception.status == '304 Not Modified'
-    assert exception.body() == ['']
-    headers = {header[0]: header[1] for header in exception.headers()}
+    assert exception.body() == []
+    headers = dict([(header[0], header[1]) for header in exception.headers()])
     assert len(headers) == 1
     assert headers['etag'] == '123abc'
     assert 'vary' not in headers
@@ -99,7 +106,7 @@ def test_400():
     assert status == _status(400)
     assert len(headers) == 1
     assert headers['Content-Type'] == 'text/plain; charset=UTF-8'
-    assert body == ['400 Bad Request: error message']
+    assert body == '400 Bad Request: error message'
 
 
 def test_401():
@@ -108,7 +115,7 @@ def test_401():
     assert status == _status(401)
     assert len(headers) == 1
     assert headers['WWW-Authenticate'] == 'login'
-    assert body == ['']
+    assert body == ''
 
 
 def test_403():
@@ -117,7 +124,7 @@ def test_403():
     assert status == _status(403)
     assert len(headers) == 1
     assert headers['Content-Type'] == 'text/plain; charset=UTF-8'
-    assert body == ['403 Forbidden: error message']
+    assert body == '403 Forbidden: error message'
 
 
 def test_404():
@@ -126,7 +133,7 @@ def test_404():
     assert status == _status(404)
     assert len(headers) == 1
     assert headers['Content-Type'] == 'text/plain; charset=UTF-8'
-    assert body == ['404 Not Found: error message']
+    assert body == '404 Not Found: error message'
 
 
 def test_409():
@@ -135,7 +142,7 @@ def test_409():
     assert status == _status(409)
     assert len(headers) == 1
     assert headers['Content-Type'] == 'text/plain; charset=UTF-8'
-    assert body == ['409 Conflict: error message']
+    assert body == '409 Conflict: error message'
 
 
 def test_412():
@@ -144,7 +151,7 @@ def test_412():
     assert status == _status(412)
     assert len(headers) == 1
     assert headers['Content-Type'] == 'text/plain; charset=UTF-8'
-    assert body == ['412 Precondition Failed: error message']
+    assert body == '412 Precondition Failed: error message'
 
 
 def test_415():
@@ -153,7 +160,7 @@ def test_415():
     assert status == _status(415)
     assert len(headers) == 1
     assert headers['Content-Type'] == 'text/plain; charset=UTF-8'
-    assert body == ['415 Unsupported Media Type: error message']
+    assert body == '415 Unsupported Media Type: error message'
 
 
 def test_500():
@@ -162,9 +169,8 @@ def test_500():
     assert status == _status(500)
     assert len(headers) == 1
     assert headers['Content-Type'] == 'text/plain; charset=UTF-8'
-    assert len(body) == 1
-    assert body[0].startswith("Traceback ")
+    assert body.startswith("Traceback ")
 
 
 def _status(code):
-    return '%s %s' % (code, httplib.responses[code])
+    return '%s %s' % (code, http_responses[code])

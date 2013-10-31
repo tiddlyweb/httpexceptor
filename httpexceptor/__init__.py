@@ -31,6 +31,11 @@ import sys
 import traceback
 import logging
 
+try:
+    unicode
+except NameError: # Python 3
+    unicode = str
+
 
 __version__ = '1.2.1'
 __author__ = 'Chris Dent'
@@ -51,7 +56,7 @@ class HTTPExceptor(object):
     def __call__(self, environ, start_response, exc_info=None):
         try:
             return self.application(environ, start_response)
-        except HTTPException, exc:
+        except HTTPException as exc:
             # read status code from exception class's docstring
             start_response(exc.status, exc.headers(), exc_info)
             return exc.body()
@@ -59,13 +64,16 @@ class HTTPExceptor(object):
             exc_info = sys.exc_info()
             exception_text = ''.join(traceback.format_exception(*exc_info))
 
+            encoded_exception_text = exception_text.encode('utf-8', 'replace')
+
             # use the web server's and the application's logging mechanisms
-            print >> environ['wsgi.errors'], exception_text
-            logging.warn(exception_text)
+            output_stream = environ['wsgi.errors']
+            output_stream.write(bytes(encoded_exception_text))
+            logging.warning(exception_text)
 
             start_response('500 Internal Server Error',
                     [('Content-Type', 'text/plain; charset=UTF-8')], exc_info)
-            return [exception_text]
+            return [encoded_exception_text]
 
 
 class HTTPException(Exception):
@@ -83,10 +91,9 @@ class HTTPException(Exception):
             self.args = ('%s' % self,)
         output = []
         for arg in self.args:
-            if isinstance(arg, unicode):
-                arg = arg.encode('utf-8')
             output.append('%s' % arg)
-        return ['%s: %s' % (self.status, ' '.join(output))]
+        output = '%s: %s' % (self.status, ' '.join(output))
+        return [output.encode('utf-8')]
 
 
 class HTTP302(HTTPException):
@@ -98,7 +105,7 @@ class HTTP302(HTTPException):
         return [('Location', '%s' % self)]
 
     def body(self):
-        return ['']
+        return []
 
 
 class HTTP303(HTTP302):
@@ -140,7 +147,7 @@ class HTTP304(HTTPException):
                 if value]
 
     def body(self):
-        return ['']
+        return []
 
 
 class HTTP400(HTTPException):
@@ -158,7 +165,7 @@ class HTTP401(HTTPException):
         return [('WWW-Authenticate', '%s' % self)]
 
     def body(self):
-        return ['']
+        return []
 
 
 class HTTP403(HTTPException):
