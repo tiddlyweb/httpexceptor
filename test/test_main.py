@@ -24,13 +24,13 @@ def mock_response(error=None, message=None):
             raise exception_class(message or 'error message')
         else:
             start_response('200 OK', [('Content-Type', 'text/plain')])
-            return ['no errors'.encode('UTF-8')]
+            return ['no errors'.encode('utf-8')]
 
     # register middleware
     app = httpexceptor.HTTPExceptor(app)
 
     body = app(environ, start_response_mock)
-    body = ''.join(line.decode('UTF-8') for line in body)
+    body = ''.join(line.decode('utf-8') for line in body)
     return responses[0][0], responses[0][1], body
 
 

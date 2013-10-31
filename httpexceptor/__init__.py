@@ -91,7 +91,7 @@ class HTTPException(Exception):
         for arg in self.args:
             output.append('%s' % arg)
         output = '%s: %s' % (self.status, ' '.join(output))
-        return [output.encode('UTF-8')]
+        return [output.encode('utf-8')]
 
 
 class HTTP302(HTTPException):
