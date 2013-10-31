@@ -64,14 +64,16 @@ class HTTPExceptor(object):
             exc_info = sys.exc_info()
             exception_text = ''.join(traceback.format_exception(*exc_info))
 
+            encoded_exception_text = exception_text.encode('utf-8', 'replace')
+
             # use the web server's and the application's logging mechanisms
             output_stream = environ['wsgi.errors']
-            output_stream.write(bytes(exception_text.encode('utf-8', 'replace')))
+            output_stream.write(bytes(encoded_exception_text))
             logging.warning(exception_text)
 
             start_response('500 Internal Server Error',
                     [('Content-Type', 'text/plain; charset=UTF-8')], exc_info)
-            return [exception_text.encode('utf-8', 'replace')]
+            return [encoded_exception_text]
 
 
 class HTTPException(Exception):
