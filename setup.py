@@ -17,9 +17,7 @@ Programming Language :: Python :: 2.7
 Programming Language :: Python :: 3.2
 Programming Language :: Python :: 3.3
 Topic :: Internet :: WWW/HTTP :: WSGI :: Middleware
-"""
-
-CLASSIFIER_LIST = CLASSIFIERS.strip().splitlines()
+""".strip().splitlines()
 
 META = {
     'name': 'httpexceptor',
@@ -27,6 +25,7 @@ META = {
     'version': VERSION,
     'description': 'WSGI middleware to handle HTTP responses using exceptions',
     'long_description': DESC,
+    'classifiers': CLASSIFIERS,
     'license': 'LICENSE',
     'author': AUTHOR,
     'author_email': 'cdent@peermore.com',
@@ -39,8 +38,7 @@ META = {
     'extras_require': {
         'testing': ['pytest'],
         'coverage': ['figleaf', 'coverage']
-    },
-    'classifiers': CLASSIFIER_LIST
+    }
 }
 
 
