@@ -180,6 +180,12 @@ class HTTP404(HTTPException):
     status = __doc__
 
 
+class HTTP406(HTTPException):
+    """406 Not Acceptable"""
+
+    status = __doc__
+
+
 class HTTP409(HTTPException):
     """409 Conflict"""
 
