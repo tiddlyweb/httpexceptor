@@ -1,5 +1,9 @@
 """
-httpexceptor
+httpexceptor |buildstatus|
+
+.. |buildstatus| image:: https://secure.travis-ci.org/tiddlyweb/httpexceptor.png
+    :target: http://travis-ci.org/tiddlyweb/httpexceptor
+    :alt: build status
 
 WSGI middleware to handle HTTP responses using exceptions
 
