@@ -136,6 +136,15 @@ def test_404():
     assert body == '404 Not Found: error message'
 
 
+def test_406():
+    status, headers, body = mock_response(406)
+
+    assert status == _status(406)
+    assert len(headers) == 1
+    assert headers['Content-Type'] == 'text/plain; charset=UTF-8'
+    assert body == '406 Not Acceptable: error message'
+
+
 def test_409():
     status, headers, body = mock_response(409)
 
